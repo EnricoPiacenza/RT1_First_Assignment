@@ -1,4 +1,6 @@
 from __future__ import print_function
+from timeit import default_timer as timer
+
 
 import time
 from sr.robot import *
@@ -13,28 +15,32 @@ d_dh = 0.6
 """float: Threshold for the control of relative position with target token"""
 
 tokens_grabbed = []
-""" list that traks the already moved"""
+""" List that traks the tokens already moved in the desired position"""
 
 target_token = 0
 """ code of the token used to collect the others"""
 
 R = Robot()
 
-def reach_token(code,d_th):
-
+def reach_token(code,dist):
+    """ 
+    Function to reach the desired token
+    Args: code (int): code of the token we want to reach
+          dist (float): distance we want to stop the robot from the desired token         
+    """
     while(True):
-        dist, angl = find_token(code)
-        if(dist == -1 or angl == -1):
+        d, angl = find_token(code)
+        if(d == -1 or angl == -1):
             print("no token detected")
             turn(20,0.1)
-        elif(dist < d_th):
+        elif(d < dist):
             return
         elif angl > a_th:
             turn(5,0.1)
         elif angl < -a_th:
             turn(-5,0.1)
         else:
-            drive(30,0.1)
+            drive(40,0.1)
 
 def drive(speed, seconds):
     """
@@ -66,6 +72,7 @@ def turn(speed, seconds):
 def find_token(code):
     """
     Function to find the closest token
+    Args: code (int): code of the token we want to reach
 
     Returns:
         dist (float): distance of the closest token (-1 if no token is detected)
@@ -82,8 +89,17 @@ def find_token(code):
         return dist, rot_y
 
 def find_nearest():
+    """
+    Function to find the closest token
+
+    Returns:
+        code (int): the code of the nearest token found
+        -1 if no tokens are found
+    """
+
     nearest = 33
     code = 0
+    t_0 = timer()
     while nearest == 33:
 
         turn(-20,0.1)  
@@ -91,7 +107,9 @@ def find_nearest():
             if token.dist < nearest and token.info.code not in tokens_grabbed:
                 nearest = token.dist
                 code = token.info.code
-
+        t_1 = timer()
+        if(t_1 - t_0 >= 6.3 and nearest == 33):
+            return -1
     return code
 
 
@@ -130,15 +148,16 @@ def setup_target_token():
 
 def grab_all_tokens():
 
-    while len(tokens_grabbed) != 6:
+    while 1:
         token_code = find_nearest()
+        if token_code == -1:
+            print("All tokens were collected")
+            break
+
         print("next nearest: " + str(token_code))
         collect_nearest(token_code)
         bring_back_nearest()
         print("Tokens collected: " + str(tokens_grabbed))
-    print("All token were collected")
-
-
 
 
 setup_target_token()
