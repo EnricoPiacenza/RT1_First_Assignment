@@ -101,7 +101,7 @@ def find_nearest():
     code = 0
     t_0 = timer()
     while nearest == 33:
-
+        print("No token detected.")
         turn(-20,0.1)  
         for token in R.see():
             if token.dist < nearest and token.info.code not in tokens_grabbed:
