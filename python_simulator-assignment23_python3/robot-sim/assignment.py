@@ -1,9 +1,9 @@
 from __future__ import print_function
 from timeit import default_timer as timer
-
-
 import time
 from sr.robot import *
+
+
 
 a_th = 2.0
 """ float: Threshold for the control of the orientation"""
@@ -70,6 +70,7 @@ def turn(speed, seconds):
     R.motors[0].m1.power = 0    
 
 def find_token(code):
+
     """
     Function to find the closest token
     Args: code (int): code of the token we want to reach
@@ -89,6 +90,7 @@ def find_token(code):
         return dist, rot_y
 
 def find_nearest():
+    
     """
     Function to find the closest token
 
