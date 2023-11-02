@@ -4,12 +4,11 @@ import time
 from sr.robot import *
 
 
-
 a_th = 2.0
 """ float: Threshold for the control of the orientation"""
 
 d_th = 0.4
-""" float: Threshold for the control of the linear distance"""
+""" float: Threshold for the control of the linear dist"""
 
 d_dh = 0.6
 """float: Threshold for the control of relative position with target token"""
@@ -21,7 +20,9 @@ tokens_grabbed = []
 """ List that traks the tokens already moved in the desired position"""
 
 target_token = 0
-""" code of the token used to collect the others"""
+""" Code of the token used to collect the others"""
+nearest_token = 0
+""" Code of the next nearest token to grab and collect"""
 
 R = Robot()
 
@@ -29,10 +30,11 @@ def reach_token(code,dist):
     """ 
     Function to reach the desired token
     Args: code (int): code of the token we want to reach
-          dist (float): distance we want to stop the robot from the desired token         
+          dist (float): dist we want to stop the robot from the desired token         
     """
 
     print("Reaching token number: " + str(code) + "...") 
+
     while(True):
         d, angl = find_token(code)
         if(d == -1 or angl == -1):
@@ -76,18 +78,21 @@ def turn(speed, seconds):
 def find_token(code):
 
     """
-    Function to find the closest token
+    Function to find the desired token
     Args: code (int): code of the token we want to reach
 
     Returns:
-        dist (float): distance of the closest token (-1 if no token is detected)
+        dist (float): dist of the closest token (-1 if no token is detected)
         rot_y (float): angle between the robot and the token (-1 if no token is detected)
     """
+
     dist = 100
+    
     for token in R.see():
-        if token.dist < dist and token.info.code == code:
+        if token.info.code == code:
             dist = token.dist
             rot_y = token.rot_y
+            break
     if dist == 100:
         return -1, -1
     else:
@@ -96,14 +101,16 @@ def find_token(code):
 def find_nearest():
     
     """
-    Function to find the closest token
+    Function to find the closest token to the robot that is yet to collect
 
     Returns:
         code (int): the code of the nearest token found (-1 if no token is detected)        
     """
 
     global rot_direction
-    distance = 33
+    global nearest_token
+
+    dist = 100
     code = 0
     t_0 = timer()
     ideal = "clockwise"
@@ -111,8 +118,8 @@ def find_nearest():
     while 1:
         turn(40,0.1)  
         for token in R.see():
-            if token.dist < distance and token.info.code not in tokens_grabbed:
-                distance = token.dist
+            if token.dist < dist and token.info.code not in tokens_grabbed:
+                dist = token.dist
                 code = token.info.code
                 t_t = timer()
                 if(t_t - t_0 < 1.6):
@@ -124,43 +131,63 @@ def find_nearest():
         t_1 = timer()
         if(t_1 - t_0 >= 3.15):
             break
-    if(distance == 33):
-        return -1
+    if(dist == 100):
+        nearest_token = -1
     else:
-        print("--> Token code: " + str(code) + " Distance: " + str(round(distance,2)) + " Delta time: " + str(round(t_t-t_0,2)) + " Most efficient sense of rotation: " + ideal)
-        return code
+        print("--> Token code: " + str(code) + " dist: " + str(round(dist,2)) + " Delta time: " + str(round(t_t-t_0,2)) + " Most efficient sense of rotation: " + ideal)
+        nearest_token = code
 
 
-def collect_nearest(token):
+def collect_nearest():
+    """
+        function to reach and grab the nearest token
+    """
     
-    reach_token(token,d_th)
+    reach_token(nearest_token,d_th)
     R.grab()
-    tokens_grabbed.append(token)
+    
 
 
 def bring_back_nearest():
+    """
+        function to bring back the collected token near the target one.
+    """
 
     global rot_direction
+
     rot_direction *= -1
     reach_token(target_token,d_dh)
-    R.release()   
-    drive(-30,1)
+    if R.release():
+        tokens_grabbed.append(nearest_token)
+        drive(-30,1)
 
 
-def setup_target_token():
+def def_target_token():
+
     global target_token
 
-    code = find_nearest()
-    reach_token(code,d_th)    
+    find_nearest()
+    if(nearest_token == -1):
+        print("Error, no token detected.")
+        exit()
+    reach_token(nearest_token,d_th)    
     R.grab()
-    tokens_grabbed.append(code)
-    target_token = code
+    tokens_grabbed.append(nearest_token)
+    target_token = nearest_token
 
     print("Target token: " + str(target_token))
+
+def def_collecting_area():
     
-    code = find_nearest()
-    reach_token(code,d_dh)
-    tokens_grabbed.append(code)
+    find_nearest()
+
+    if nearest_token == -1:
+        print("All tokens were collected")
+        R.release()
+        exit()
+
+    reach_token(nearest_token,d_dh)
+    tokens_grabbed.append(nearest_token)
     R.release()
     drive(-30,1)
 
@@ -169,16 +196,19 @@ def setup_target_token():
 def grab_all_tokens():
 
     while 1:
-        token_code = find_nearest()
 
-        if token_code == -1:
+        find_nearest()
+
+        if nearest_token == -1:
             print("All tokens were collected")
-            break
+            exit()
 
-        collect_nearest(token_code)
+        collect_nearest()
         bring_back_nearest()
         print("Tokens collected: " + str(tokens_grabbed))
 
 
-setup_target_token()
+def_target_token()
+def_collecting_area()
 grab_all_tokens()
+
