@@ -235,6 +235,7 @@ def grab_all_tokens():
         print("Tokens collected: " + str(tokens_grabbed))
 
 def main():
+    
     t_0 = timer()
     def_target_token()
     def_collecting_area()
