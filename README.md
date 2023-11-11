@@ -13,7 +13,7 @@
 
 3. Initialize the Robot object (`R`).
 
-### Define function main()
+### Pseudocode of function main()
 
 1. Function `main`:
    - Record the starting time (`t_0`).
@@ -23,7 +23,7 @@
    - Record the ending time (`t_1`).
    - Print the time necessary to collect all tokens: `t_1 - t_0` in seconds.
 
-### Define the functions called in main()    
+### Pseudocode of the functions called in main()    
 
 1. Function `def_target_token()`:
    - Call `find_nearest()` to determine the closest token to the robot.
@@ -57,7 +57,7 @@
       - Call `bring_back_nearest()` to bring back the collected token in the collecting area.
       - Print "Tokens collected: {tokens_grabbed}".
 
-### Define ausilary functions
+### Pseudocode of the ausilary functions
 
 1. Function `reach_token(code, dist)`:
    - Start an infinite loop:
@@ -141,7 +141,7 @@
       - Print "token: {next_to_grab} grabbed successfully."
       - Call the robot function `Drive(-30,1)` to drive backwards and correctly position to search for the next token. 
 
-### Define the robot functions
+### Pseudocode of the robot functions
 
 1. Function `drive(speed, seconds)`:
    - Set the power of motors `m1` and `m2` equal to `speed`.
