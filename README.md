@@ -161,7 +161,7 @@
          - Set dist equal to token.dist.
          - Set rot_y equal to token.angl.
          - Break the loop.
-   - If `dist` equal to 100: return -1 for distance and -1 for angle.
+   - If `dist` equal to 100:
       - Return dist equal to -1.
       - Return rot_y equal to -1.
    - Else:
