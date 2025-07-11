@@ -1,4 +1,4 @@
-# Experimental_Robotics_Assignment2
+# Research Track 1 - Assignmnt 1
 This is the README.MD file for the first assignment of the course Research Track 1.
 
 ## AUTHOR 👨‍💻
