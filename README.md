@@ -1,3 +1,7 @@
+## Video 🎬
+
+[![Video of the run](https://img.youtube.com/vi/8urNXy3_Drc/hqdefault.jpg)](https://youtu.be/8urNXy3_Drc)
+
 ### Define libraries, modules and global variables needed for the correct functioning of the program
 
 1. Import libraries and modules.
