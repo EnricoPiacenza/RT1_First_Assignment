@@ -1,3 +1,9 @@
+# Experimental_Robotics_Assignment2
+This is the README.MD file for the first assignment of the course Research Track 1.
+
+## AUTHOR 👨‍💻
+* [Enrico Piacenza](https://github.com/EnricoPiacenza) (s4878469)
+
 ## Video 🎬
 
 [![Video of the run](https://img.youtube.com/vi/8urNXy3_Drc/hqdefault.jpg)](https://youtu.be/8urNXy3_Drc)
